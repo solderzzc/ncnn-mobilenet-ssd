@@ -656,11 +656,11 @@ int Net::forward_layer(int layer_index, std::vector<Mat>& blob_mats, bool lightm
         }
         gettimeofday(&tv,NULL);
         t1 = tv.tv_sec*1000 + tv.tv_usec/1000;
-        fprintf(stderr, " %ld mseconds \n", (t1-t0));
+        //fprintf(stderr, " %ld mseconds \n", (t1-t0));
     }
     //gettimeofday(&tv,NULL);
     //long t1 = tv.tv_sec*1000 + tv.tv_usec/1000;
-    fprintf(stderr, "forward_layer %d %s done \n", layer_index, layer->name.c_str());
+    //fprintf(stderr, "forward_layer %d %s done \n", layer_index, layer->name.c_str());
      //const Mat& blob = blob_mats[layer->tops[0]];
      //fprintf(stderr, "[%-2d %-16s %-16s]  %d    blobs count = %-3d   size = %-3d x %-3d\n", layer_index, layer->type.c_str(), layer->name.c_str(), layer->tops[0], blob.c, blob.h, blob.w);
     return 0;
@@ -739,7 +739,7 @@ int Extractor::extract(int blob_index, Mat& feat)
     feat = blob_mats[blob_index];
     gettimeofday(&tv,NULL);
     long t1 = tv.tv_sec*1000 + tv.tv_usec/1000;
-    printf( "%ld mseconds\n", (t1-t0) ); 
+    //printf( "%ld mseconds\n", (t1-t0) ); 
 
     return ret;
 }
@@ -799,7 +799,7 @@ int Extractor::extract(const char* blob_name, Mat& feat)
     feat = blob_mats[blob_index];
     gettimeofday(&tv,NULL);
     long t1 = tv.tv_sec*1000 + tv.tv_usec/1000;
-    printf( "%ld mseconds\n", (t1-t0) ); 
+    printf( "extract cost %ld mseconds\n", (t1-t0) ); 
 
     return ret;
 }

@@ -2,7 +2,7 @@
 ```
 mkdir build
 cd build
-cmake ..
+cmake -DANDROID=1 ..
 make
 cp ssdmobilenet/ssdmobilenet ../ssdmobilenet/
 cd ../ssdmobilenet

@@ -21,11 +21,36 @@
 #include <unistd.h>
 #include "net.h"
 
+#include <iostream>
+#include <ctime>
+
+class Timer
+{
+public:
+    Timer() { clock_gettime(CLOCK_REALTIME, &beg_); }
+
+    double elapsed() {
+        clock_gettime(CLOCK_REALTIME, &end_);
+        return end_.tv_sec - beg_.tv_sec +
+            (end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
+    }
+
+    void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
+
+private:
+    timespec beg_, end_;
+};
+
 static int detect_mobilenet(const cv::Mat& bgr, std::vector<float>& cls_scores)
 {
     ncnn::Net mobilenet;
     mobilenet.load_param("ssdmobilenet.param");
     mobilenet.load_model("ssdmobilenet.bin");
+
+    Timer tmr;
+    double t = tmr.elapsed();
+    std::cout << t << std::endl;
+
 
     ncnn::Mat in = ncnn::Mat::from_pixels_resize(bgr.data, ncnn::Mat::PIXEL_BGR, bgr.cols, bgr.rows, 300, 300);
 
@@ -39,14 +64,19 @@ static int detect_mobilenet(const cv::Mat& bgr, std::vector<float>& cls_scores)
     // ex.input("data", in);
 
     ncnn::Mat out;
+    //ex.set_light_mode(true);
 
-    for(int i=0;i<1;i++)
+    for(int i=0;i<100;i++)
     {
+        tmr.reset();
         ncnn::Extractor ex = mobilenet.create_extractor();
-        ex.set_light_mode(true);
-        //ex.set_num_threads(4);
+        ex.set_num_threads(4);
         ex.input("data", in);
         ex.extract("detection_out",out);
+
+        t = tmr.elapsed();
+        std::cout << "one round ssd cost" << std::endl;
+        std::cout << t << std::endl;
         //ex.extract("conv6/dw_conv6/dw/relu", out);    
 
     }
@@ -102,7 +132,7 @@ int main(int argc, char** argv)
 {
     const char* imagepath = argv[1];
 
-    cv::Mat m = cv::imread(imagepath, CV_LOAD_IMAGE_COLOR);
+    cv::Mat m = cv::imread(imagepath, 1);//CV_LOAD_IMAGE_COLOR);
     if (m.empty())
     {
         fprintf(stderr, "cv::imread %s failed\n", imagepath);
